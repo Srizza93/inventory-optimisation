@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: backend
+
+inventory:
+  optimisation:
+    deliveryDelayDays: 2
+    packageSize: 2
