@@ -30,4 +30,7 @@ public class InventoryParameters {
 
     @Column(name="purchase_day")
     private String purchaseDay;
+
+    @Column(name="current_stock")
+    private Integer currentStock;
 }

@@ -6,9 +6,10 @@ CREATE TABLE IF NOT EXISTS inventory_parameters (
     package_format INT NOT NULL,
     working_days_consumption INT NOT NULL,
     weekend_consumption INT NOT NULL,
-    purchase_day VARCHAR(255) NOT NULL
+    purchase_day VARCHAR(255) NOT NULL,
+    current_stock INT NOT NULL
 );
 
 INSERT INTO inventory_parameters
-    (id, delivery_delay, package_format, working_days_consumption, weekend_consumption, purchase_day)
-    VALUES (gen_random_uuid(), 2, 2, 3, 4, 'SUNDAY');
+    (id, delivery_delay, package_format, working_days_consumption, weekend_consumption, purchase_day, current_stock)
+    VALUES (gen_random_uuid(), 2, 2, 3, 4, 'SUNDAY', 6);

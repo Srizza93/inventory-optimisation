@@ -34,7 +34,7 @@ public class OptimisationController {
                 .orElseThrow(() -> new RuntimeException("Inventory parameters not found"));
 
         return InventoryDto.builder()
-                .quantityRecommendationToBuy(optimisationCalculation.calculateOptimisation(inventoryParameters))
+                .purchaseSchedule(optimisationCalculation.calculateOptimisation(inventoryParameters))
                 .inventoryParameters(inventoryParameters)
                 .build();
     }
@@ -49,7 +49,7 @@ public class OptimisationController {
         var updatedInventoryParameters = inventoryParametersRepository.save(inventoryParametersRequest);
 
         return InventoryDto.builder()
-                .quantityRecommendationToBuy(optimisationCalculation.calculateOptimisation(inventoryParameters))
+                .purchaseSchedule(optimisationCalculation.calculateOptimisation(inventoryParameters))
                 .inventoryParameters(updatedInventoryParameters)
                 .build();
     }

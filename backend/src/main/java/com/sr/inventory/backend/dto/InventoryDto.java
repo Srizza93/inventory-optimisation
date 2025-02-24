@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class InventoryDto {
 
-    private Integer quantityRecommendationToBuy;
     private InventoryParameters inventoryParameters;
+    private List<PurchaseSchedule> purchaseSchedule;
 }
