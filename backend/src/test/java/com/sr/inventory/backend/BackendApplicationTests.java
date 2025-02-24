@@ -1,4 +1,4 @@
-package com.inventory.backend;
+package com.sr.inventory.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.inventory.backend;
+package com.sr.inventory.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
