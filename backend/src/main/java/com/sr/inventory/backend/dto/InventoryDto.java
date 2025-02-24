@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Inventory {
+public class InventoryDto {
 
-    private int quantityRecommendationToBuy;
+    private Integer quantityRecommendationToBuy;
 }

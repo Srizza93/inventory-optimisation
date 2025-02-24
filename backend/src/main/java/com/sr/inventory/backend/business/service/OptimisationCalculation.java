@@ -1,11 +1,12 @@
 package com.sr.inventory.backend.business.service;
 
+import com.sr.inventory.backend.model.InventoryParameters;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OptimisationCalculation {
 
-    public int calculateOptimisation(int deliveryDelay, int packageFormat) {
-        return deliveryDelay * packageFormat;
+    public Integer calculateOptimisation(InventoryParameters inventoryParameters) {
+        return inventoryParameters.getDeliveryDelay() * inventoryParameters.getPackageFormat();
     }
 }
