@@ -15,4 +15,5 @@ public class PurchaseSchedule {
 
     private LocalDate purchaseDate;
     private Integer quantityToBuy;
+    private Integer currentStock;
 }

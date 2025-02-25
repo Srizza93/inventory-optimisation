@@ -4,6 +4,7 @@ import com.sr.inventory.backend.dto.PurchaseSchedule;
 import com.sr.inventory.backend.model.InventoryParameters;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @Service
 public class OptimisationCalculation {
 
-    LocalDate startDate = LocalDate.of(2025, 1, 5); // Sunday, January 6, 2025
+    LocalDate startDate = LocalDate.of(2025, 1, 5);
     LocalDate endDate = startDate.plusYears(1);
 
     public List<PurchaseSchedule> calculateOptimisation(InventoryParameters inventoryParameters) {
@@ -20,13 +21,17 @@ public class OptimisationCalculation {
         List<PurchaseSchedule> purchaseSchedule = new ArrayList<>();
         var currentStock = inventoryParameters.getCurrentStock();
         var packageFormat = inventoryParameters.getPackageFormat();
-        var bufferStock = getBufferStock(inventoryParameters);
+        var purchasedQuantity = 0;
 
         while (actualDate.isBefore(endDate)) {
-            var quantityToBuy = getQuantityToBuyInfo(inventoryParameters, actualDate, packageFormat, currentStock);
+            var quantityToBuy = getQuantityToBuy(inventoryParameters, actualDate, packageFormat, currentStock);
             var dailyConsumption = getDailyConsumption(inventoryParameters, actualDate);
 
-            currentStock = currentStock + quantityToBuy - dailyConsumption;
+            if (quantityToBuy > 0) {
+                purchasedQuantity = quantityToBuy;
+            }
+
+            currentStock = fillStock(currentStock, actualDate, purchasedQuantity, dailyConsumption, inventoryParameters);
 
 
             // Out of stock check
@@ -37,6 +42,7 @@ public class OptimisationCalculation {
                 actualDate = startDate;
             } else {
                 purchaseSchedule.add(PurchaseSchedule.builder()
+                                .currentStock(currentStock)
                                 .purchaseDate(actualDate)
                                 .quantityToBuy(quantityToBuy)
                         .build());
@@ -48,19 +54,29 @@ public class OptimisationCalculation {
         return purchaseSchedule;
     }
 
-    private Integer getQuantityToBuyInfo(InventoryParameters inventoryParameters, LocalDate actualDate, Integer packageFormat, Integer currentStock) {
+    private Integer getQuantityToBuy(InventoryParameters inventoryParameters, LocalDate actualDate, Integer packageFormat, Integer currentStock) {
         var actualDayOfWeek = actualDate.getDayOfWeek().toString();
+        var bufferStock = getBufferStock(inventoryParameters);
 
         if (actualDayOfWeek.equals(inventoryParameters.getPurchaseDay())) {
             var weeklyConsumption = (5 * inventoryParameters.getWorkingDaysConsumption()) + (2 * inventoryParameters.getWeekendConsumption()) - currentStock;
             var roundedUpWeeklyConsumption = ((weeklyConsumption + packageFormat - 1) / packageFormat) * packageFormat;
 
-            return roundedUpWeeklyConsumption;
+            return roundedUpWeeklyConsumption + bufferStock;
         }
         return 0;
     }
 
+    private Integer fillStock(Integer currentStock, LocalDate actualDate, Integer purchasedQuantity,
+                              Integer dailyConsumption, InventoryParameters inventoryParameters) {
+        var purchaseDay = DayOfWeek.valueOf(inventoryParameters.getPurchaseDay()).plus(inventoryParameters.getDeliveryDelay()).getValue();
 
+        if (actualDate.getDayOfWeek().getValue() == purchaseDay) {
+            return currentStock + purchasedQuantity - dailyConsumption;
+        }
+
+        return currentStock - dailyConsumption;
+    }
 
     private Integer getDailyConsumption(InventoryParameters inventoryParameters, LocalDate actualDate) {
         if (actualDate.getDayOfWeek().getValue() < 5) {
