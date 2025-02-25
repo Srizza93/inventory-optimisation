@@ -29,7 +29,7 @@ public class OptimisationCalculation {
 
             currentStock = currentStock - dailyConsumption;
 
-            var orderAmount = getQuantityToBuy(inventoryParameters, actualDate, packageFormat, currentStock, bufferStock);
+            var orderAmount = getQuantityToBuy(inventoryParameters, actualDate, packageFormat, currentStock, bufferStock, deliveryOrders);
 
             if (orderAmount > 0) {
                 deliveryOrders.add(DeliveryOrder.builder()
@@ -62,11 +62,19 @@ public class OptimisationCalculation {
     }
 
     private Integer getQuantityToBuy(InventoryParameters inventoryParameters, LocalDate actualDate,
-                                     Integer packageFormat, Integer currentStock, Integer bufferStock) {
+                                     Integer packageFormat, Integer currentStock, Integer bufferStock,
+                                     List<DeliveryOrder> deliveryOrders) {
         var actualDayOfWeek = actualDate.getDayOfWeek().toString();
 
         if (actualDayOfWeek.equals(inventoryParameters.getPurchaseDay())) {
             var weekRequiredConsumption = (5 * inventoryParameters.getWorkingDaysConsumption()) + (2 * inventoryParameters.getWeekendConsumption()) - currentStock;
+
+            var pendingDeliveries = deliveryOrders.stream()
+                    .filter(order -> order.getDeliveryDate().isAfter(actualDate) && order.getDeliveryDate().isBefore(actualDate.plusDays(inventoryParameters.getDeliveryDelay() + 1)))
+                    .mapToInt(DeliveryOrder::getOrderAmount)
+                    .sum();
+
+            weekRequiredConsumption -= pendingDeliveries;
 
             if (weekRequiredConsumption % packageFormat == 0) {
                 return weekRequiredConsumption + bufferStock;
