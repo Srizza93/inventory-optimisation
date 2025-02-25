@@ -2,6 +2,7 @@ package com.sr.inventory.backend.rest;
 
 import com.sr.inventory.backend.business.service.OptimisationCalculation;
 import com.sr.inventory.backend.dto.InventoryDto;
+import com.sr.inventory.backend.exception.NotFoundException;
 import com.sr.inventory.backend.model.InventoryParameters;
 import com.sr.inventory.backend.repository.InventoryParametersRepository;
 import jakarta.validation.Valid;
@@ -21,11 +22,11 @@ public class OptimisationController {
     private final OptimisationCalculation optimisationCalculation;
 
     @GetMapping
-    public InventoryDto getInventoryOptimisation(@RequestParam final String parametersId) {
+    public InventoryDto getInventoryOptimisation(@RequestParam final String parametersId) throws NotFoundException {
         log.info("Optimising inventory");
 
         var inventoryParameters = inventoryParametersRepository.findById(parametersId)
-                .orElseThrow(() -> new RuntimeException("Inventory parameters not found"));
+                .orElseThrow(() -> new NotFoundException("Inventory parameters not found"));
 
         return InventoryDto.builder()
                 .purchaseSchedule(optimisationCalculation.calculateOptimisation(inventoryParameters))
@@ -34,11 +35,11 @@ public class OptimisationController {
     }
 
     @PutMapping
-    public InventoryDto updateInventoryParameters(@Valid @RequestBody InventoryParameters inventoryParametersRequest) {
+    public InventoryDto updateInventoryParameters(@Valid @RequestBody InventoryParameters inventoryParametersRequest) throws NotFoundException {
         log.info("Updating inventory parameters");
 
         var inventoryParameters = inventoryParametersRepository.findById(inventoryParametersRequest.getId())
-                .orElseThrow(() -> new RuntimeException("Inventory parameters not found"));
+                .orElseThrow(() -> new NotFoundException("Inventory parameters not found"));
 
         var updatedInventoryParameters = inventoryParametersRepository.save(inventoryParametersRequest);
 

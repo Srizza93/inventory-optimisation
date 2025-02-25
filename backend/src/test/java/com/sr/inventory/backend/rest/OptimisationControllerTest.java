@@ -86,4 +86,15 @@ public class OptimisationControllerTest {
                 .andExpect(jsonPath("$.inventoryParameters").exists())
                 .andExpect(jsonPath("$.purchaseSchedule").exists());
     }
+
+    // test edge cases
+    @Test
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 404 when inventory parameters not found")
+    void it_should_return_404_when_inventory_parameters_not_found() throws Exception {
+        // When & Then
+        mvc.perform(get("/inventory")
+                        .param("parametersId", "invalid-id"))
+                .andExpect(status().isNotFound());
+    }
 }
