@@ -58,7 +58,16 @@ public class OptimisationControllerTest {
                         .param("parametersId", inventoryParameters.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inventoryParameters").exists())
-                .andExpect(jsonPath("$.purchaseSchedule").exists());
+                .andExpect(jsonPath("$.purchaseSchedule").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[0].currentStock").value(2))
+                .andExpect(jsonPath("$.purchaseSchedule[0].purchaseDate").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[0].orderAmount").value(30))
+                .andExpect(jsonPath("$.purchaseSchedule[1].currentStock").value(0))
+                .andExpect(jsonPath("$.purchaseSchedule[1].purchaseDate").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[1].orderAmount").value(0))
+                .andExpect(jsonPath("$.purchaseSchedule[2].currentStock").value(30))
+                .andExpect(jsonPath("$.purchaseSchedule[2].purchaseDate").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[2].orderAmount").value(0));
     }
 
     @Test
@@ -84,7 +93,16 @@ public class OptimisationControllerTest {
                         .content(bodyContent))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.inventoryParameters").exists())
-                .andExpect(jsonPath("$.purchaseSchedule").exists());
+                .andExpect(jsonPath("$.purchaseSchedule").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[0].currentStock").value(1))
+                .andExpect(jsonPath("$.purchaseSchedule[0].purchaseDate").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[0].orderAmount").value(45))
+                .andExpect(jsonPath("$.purchaseSchedule[1].currentStock").value(0))
+                .andExpect(jsonPath("$.purchaseSchedule[1].purchaseDate").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[1].orderAmount").value(0))
+                .andExpect(jsonPath("$.purchaseSchedule[2].currentStock").value(0))
+                .andExpect(jsonPath("$.purchaseSchedule[2].purchaseDate").exists())
+                .andExpect(jsonPath("$.purchaseSchedule[2].orderAmount").value(0));
     }
 
     // test edge cases
