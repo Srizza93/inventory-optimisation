@@ -14,6 +14,6 @@ import java.time.LocalDate;
 public class PurchaseSchedule {
 
     private LocalDate purchaseDate;
-    private Integer quantityToBuy;
+    private Integer orderAmount;
     private Integer currentStock;
 }

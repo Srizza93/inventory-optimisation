@@ -69,11 +69,11 @@ public class OptimisationControllerTest {
         var updatedInventoryParameters = InventoryParameters.builder()
                 .id(inventoryParameters.getId())
                 .deliveryDelay(3)
-                .packageFormat(3)
+                .packageFormat(2)
                 .workingDaysConsumption(4)
                 .weekendConsumption(5)
-                .purchaseDay("MONDAY")
-                .currentStock(7)
+                .purchaseDay("SUNDAY")
+                .currentStock(6)
                 .build();
 
         var bodyContent = objectMapper.writeValueAsString(updatedInventoryParameters);
