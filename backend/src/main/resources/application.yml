@@ -13,7 +13,3 @@ spring:
     baseline-version: 0
     locations: "db/migration"
     out-of-order: true
-
-inventory:
-  optimisation:
-    id: ${PARAMETERS_ID}

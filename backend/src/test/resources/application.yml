@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:13.0:///integration-tests-db
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    properties:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    enabled: true
+server:
+  port: 0

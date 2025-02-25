@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/inventory")
@@ -20,14 +17,11 @@ public class OptimisationController {
 
     private static final Logger log = LoggerFactory.getLogger(OptimisationController.class);
 
-    @Value("${inventory.optimisation.id}")
-    private String parametersId;
-
     private final InventoryParametersRepository inventoryParametersRepository;
     private final OptimisationCalculation optimisationCalculation;
 
     @GetMapping
-    public InventoryDto getInventoryOptimisation() {
+    public InventoryDto getInventoryOptimisation(@RequestParam final String parametersId) {
         log.info("Optimising inventory");
 
         var inventoryParameters = inventoryParametersRepository.findById(parametersId)
@@ -43,7 +37,7 @@ public class OptimisationController {
     public InventoryDto updateInventoryParameters(@Valid @RequestBody InventoryParameters inventoryParametersRequest) {
         log.info("Updating inventory parameters");
 
-        var inventoryParameters = inventoryParametersRepository.findById(parametersId)
+        var inventoryParameters = inventoryParametersRepository.findById(inventoryParametersRequest.getId())
                 .orElseThrow(() -> new RuntimeException("Inventory parameters not found"));
 
         var updatedInventoryParameters = inventoryParametersRepository.save(inventoryParametersRequest);
