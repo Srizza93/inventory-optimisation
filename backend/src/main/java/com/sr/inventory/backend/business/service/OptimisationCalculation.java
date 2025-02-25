@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class OptimisationCalculation {
 
-    LocalDate startDate = LocalDate.of(2025, 1, 6); // Sunday, January 6, 2025
+    LocalDate startDate = LocalDate.of(2025, 1, 5); // Sunday, January 6, 2025
     LocalDate endDate = startDate.plusYears(1);
 
     public List<PurchaseSchedule> calculateOptimisation(InventoryParameters inventoryParameters) {
@@ -19,26 +19,20 @@ public class OptimisationCalculation {
         var actualDate = startDate;
         List<PurchaseSchedule> purchaseSchedule = new ArrayList<>();
         var currentStock = inventoryParameters.getCurrentStock();
+        var packageFormat = inventoryParameters.getPackageFormat();
+        var bufferStock = getBufferStock(inventoryParameters);
 
         while (actualDate.isBefore(endDate)) {
-            var quantityToBuy = 0;
+            var quantityToBuy = getQuantityToBuyInfo(inventoryParameters, actualDate, packageFormat, currentStock);
+            var dailyConsumption = getDailyConsumption(inventoryParameters, actualDate);
 
-            // Consumption
-            if (actualDate.getDayOfWeek().getValue() < 5) {
-                inventoryParameters.setCurrentStock(currentStock - inventoryParameters.getWorkingDaysConsumption());
-            } else {
-                inventoryParameters.setCurrentStock(currentStock - inventoryParameters.getWeekendConsumption());
-            }
+            currentStock = currentStock + quantityToBuy - dailyConsumption;
 
-            // Purchase
-            if (actualDate.getDayOfWeek().toString().equals(inventoryParameters.getPurchaseDay())) {
-                quantityToBuy = getWeeklyConsumption(inventoryParameters);
-                inventoryParameters.setCurrentStock(currentStock + quantityToBuy);
-            }
 
             // Out of stock check
-            if (inventoryParameters.getCurrentStock() < 0) {
-                inventoryParameters.setPackageFormat(inventoryParameters.getPackageFormat() + 1);
+            if (currentStock < 0) {
+                currentStock = inventoryParameters.getCurrentStock();
+                packageFormat = packageFormat + inventoryParameters.getPackageFormat();
                 purchaseSchedule.clear();
                 actualDate = startDate;
             } else {
@@ -54,12 +48,33 @@ public class OptimisationCalculation {
         return purchaseSchedule;
     }
 
-    private Integer getWeeklyConsumption(InventoryParameters inventoryParameters) {
-        int workingDaysConsumption = inventoryParameters.getWorkingDaysConsumption();
-        int weekendConsumption = inventoryParameters.getWeekendConsumption();
-        int packageFormat = inventoryParameters.getPackageFormat();
+    private Integer getQuantityToBuyInfo(InventoryParameters inventoryParameters, LocalDate actualDate, Integer packageFormat, Integer currentStock) {
+        var actualDayOfWeek = actualDate.getDayOfWeek().toString();
 
-        int consumption = (5 * workingDaysConsumption) + (2 * weekendConsumption);
-        return (consumption + packageFormat - 1) / packageFormat * packageFormat;
+        if (actualDayOfWeek.equals(inventoryParameters.getPurchaseDay())) {
+            var weeklyConsumption = (5 * inventoryParameters.getWorkingDaysConsumption()) + (2 * inventoryParameters.getWeekendConsumption()) - currentStock;
+            var roundedUpWeeklyConsumption = ((weeklyConsumption + packageFormat - 1) / packageFormat) * packageFormat;
+
+            return roundedUpWeeklyConsumption;
+        }
+        return 0;
+    }
+
+
+
+    private Integer getDailyConsumption(InventoryParameters inventoryParameters, LocalDate actualDate) {
+        if (actualDate.getDayOfWeek().getValue() < 5) {
+            return inventoryParameters.getWorkingDaysConsumption();
+        } else {
+            return inventoryParameters.getWeekendConsumption();
+        }
+    }
+
+    private Integer getBufferStock(InventoryParameters inventoryParameters) {
+        var maxConsumption = Math.max(inventoryParameters.getWorkingDaysConsumption(), inventoryParameters.getWeekendConsumption());
+        var maxDelay = 7 + inventoryParameters.getDeliveryDelay();
+        var averageDailyConsumption = (5 * inventoryParameters.getWorkingDaysConsumption() + 2 * inventoryParameters.getWeekendConsumption()) / 7;
+        var averageLeadTime = 7 + inventoryParameters.getDeliveryDelay();
+        return (maxConsumption * maxDelay) - (averageDailyConsumption * averageLeadTime);
     }
 }
