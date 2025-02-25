@@ -46,7 +46,6 @@ function initData() {
       purchaseScheduleData.value = response
     })
     .catch((error) => {
-      console.log(error)
       notification.sendNotification(ToastType.DANGER_TOAST, error.response?.data?.message)
     })
     .finally(() => {
