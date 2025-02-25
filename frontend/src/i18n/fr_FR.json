@@ -1,4 +1,10 @@
 {
+  "optimization_inventory-parameters-current-stock--label": "Stock actuel",
+  "optimization_inventory-parameters-delivery-day--label": "Jour de livraison",
+  "optimization_inventory-parameters-package-format--label": "Format de l'emballage",
+  "optimization_inventory-parameters-purchase-day--label": "Jour d'achat",
+  "optimization_inventory-parameters-weekend-consumption--label": "Consommation du week-end",
+  "optimization_inventory-parameters-working-days-consumption--label": "Consommation des jours ouvrables",
   "optimization_purchase-schedule_purchase-date--title": "Date de commande",
   "optimization_purchase-schedule_order-amount--title": "Quantité de commande",
   "optimization_purchase-schedule_current-stock--title": "Stock actuel"

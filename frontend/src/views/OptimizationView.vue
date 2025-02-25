@@ -3,6 +3,10 @@
     <h1>Optimization</h1>
     <p>Optimization view</p>
   </div>
+  <ParametersForm
+    v-if="purchaseScheduleData"
+    :parameters="purchaseScheduleData?.inventoryParameters"
+  />
   <InventoryDataTable
     v-if="purchaseScheduleData"
     :headers="purchaseScheduleHeaders"
@@ -19,6 +23,7 @@ import { notification } from '@/stores/StateNotificationService'
 import InventoryDataTable from '@/components/InventoryDataTable.vue'
 import type { PurchaseScheduleItem } from '@/types/PurchaseSchedule'
 import { ToastType } from '@/types/NotificationState'
+import ParametersForm from '@/components/ParametersForm.vue'
 
 let pending = ref(false)
 let purchaseScheduleData: Ref<PurchaseScheduleItem | null> = ref(null)
