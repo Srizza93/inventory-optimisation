@@ -1,10 +1,10 @@
 package com.sr.inventory.backend.business.service;
 
+import com.sr.inventory.backend.business.dto.DeliveryOrder;
 import com.sr.inventory.backend.dto.PurchaseSchedule;
 import com.sr.inventory.backend.model.InventoryParameters;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,27 +19,35 @@ public class OptimisationCalculation {
 
         var actualDate = startDate;
         List<PurchaseSchedule> purchaseSchedule = new ArrayList<>();
+        List<DeliveryOrder> deliveryOrders = new ArrayList<>();
         var currentStock = inventoryParameters.getCurrentStock();
         var packageFormat = inventoryParameters.getPackageFormat();
         var bufferStock = getBufferStock(inventoryParameters);
-        var deliveryDelayCounter = 0;
-        var purchaseAmount = 0;
 
         while (actualDate.isBefore(endDate)) {
             var dailyConsumption = getDailyConsumption(inventoryParameters, actualDate, currentStock);
+
+            currentStock = currentStock - dailyConsumption;
+
             var orderAmount = getQuantityToBuy(inventoryParameters, actualDate, packageFormat, currentStock, bufferStock);
 
             if (orderAmount > 0) {
-                purchaseAmount = orderAmount;
+                deliveryOrders.add(DeliveryOrder.builder()
+                        .deliveryDate(actualDate.plusDays(inventoryParameters.getDeliveryDelay()))
+                        .orderAmount(orderAmount)
+                        .build());
             }
 
-            if (deliveryDelayCounter == inventoryParameters.getDeliveryDelay()) {
-                currentStock += purchaseAmount;
-                purchaseAmount = 0;
-                deliveryDelayCounter = 0;
+            if (!deliveryOrders.isEmpty()) {
+                var iterator = deliveryOrders.iterator();
+                while (iterator.hasNext()) {
+                    var deliveryOrder = iterator.next();
+                    if (actualDate.isEqual(deliveryOrder.getDeliveryDate())) {
+                        currentStock += deliveryOrder.getOrderAmount();
+                        iterator.remove();
+                    }
+                }
             }
-
-            currentStock = currentStock - dailyConsumption;
 
             purchaseSchedule.add(PurchaseSchedule.builder()
                     .currentStock(currentStock)
@@ -48,7 +56,6 @@ public class OptimisationCalculation {
                     .build());
 
             actualDate = actualDate.plusDays(1);
-            deliveryDelayCounter++;
         }
 
         return purchaseSchedule;
@@ -74,7 +81,7 @@ public class OptimisationCalculation {
     private Integer getDailyConsumption(InventoryParameters inventoryParameters, LocalDate actualDate, Integer currentStock) {
         var consumption = 0;
 
-        if (actualDate.getDayOfWeek().getValue() < 5) {
+        if (actualDate.getDayOfWeek().getValue() < 6) {
             consumption = inventoryParameters.getWorkingDaysConsumption();
         } else {
             consumption = inventoryParameters.getWeekendConsumption();
@@ -83,6 +90,7 @@ public class OptimisationCalculation {
         if (currentStock <= consumption) {
             consumption = currentStock;
         }
+
         return consumption;
     }
 
