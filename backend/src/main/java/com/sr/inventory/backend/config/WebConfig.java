@@ -1,4 +1,4 @@
-package com.bao.stockyback.config;
+package com.sr.inventory.backend.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,22 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final ObjectMapper objectMapper;
-
     @Value("${cors.allowed.origin}")
     private String corsAllowedOrigin;
-
-    // This method is used to add a custom message converter to the list of converters
-    // The goal is to use the custom ObjectMapper to serialize and deserialize JSON
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.addFirst(new MappingJackson2HttpMessageConverter(objectMapper));
-    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(corsAllowedOrigin)
-                .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE");
+                .allowedMethods("HEAD", "GET", "PUT");
     }
 }
