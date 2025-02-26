@@ -33,7 +33,7 @@
         type="number"
         class="form-group__input"
         id="package-format"
-        min="0"
+        min="1"
         v-model="newParameters.packageFormat"
       />
     </div>
@@ -41,12 +41,11 @@
       <label for="purchase-day">{{
         $t('optimization_inventory-parameters_purchase-day--label')
       }}</label>
-      <input
-        type="text"
-        class="form-group__input"
-        id="purchase-day"
-        v-model="newParameters.purchaseDay"
-      />
+      <select class="form-group__input" id="purchase-day" v-model="newParameters.purchaseDay">
+        <option v-for="day in daysOptions" :key="day.option" :value="day.option">
+          {{ day.value }}
+        </option>
+      </select>
     </div>
     <div class="form-group">
       <label for="weekend-consumption">{{
@@ -86,12 +85,21 @@
 
 <script setup lang="ts">
 import type { InventoryParameters } from '@/types/PurchaseSchedule'
-import { onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 
 import SkeletonCard from './SkeletonCard.vue'
+import { days } from '@/utils/daysHelper'
+import i18n from '@/i18n'
 
 const props = defineProps<{ parameters: InventoryParameters; pending: boolean }>()
 const emit = defineEmits(['update:parameters'])
+
+const daysOptions = computed(() =>
+  days.map((d) => ({
+    option: d,
+    value: i18n.global.t('optimization_global_days_' + d.toLowerCase() + '--label'),
+  })),
+)
 
 const newParameters: Ref<InventoryParameters | null> = ref(null)
 

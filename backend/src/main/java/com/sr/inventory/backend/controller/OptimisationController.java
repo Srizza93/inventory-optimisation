@@ -41,6 +41,8 @@ public class OptimisationController {
         var inventoryParameters = inventoryParametersRepository.findById(inventoryParametersRequest.getId())
                 .orElseThrow(() -> new NotFoundException("Inventory parameters not found"));
 
+        optimisationCalculation.validateParameters(inventoryParametersRequest);
+
         var updatedInventoryParameters = inventoryParametersRepository.save(inventoryParametersRequest);
 
         return InventoryDto.builder()

@@ -1,4 +1,11 @@
 {
+  "optimization_global_days_monday--label": "Monday",
+  "optimization_global_days_tuesday--label": "Tuesday",
+  "optimization_global_days_wednesday--label": "Wednesday",
+  "optimization_global_days_thursday--label": "Thursday",
+  "optimization_global_days_friday--label": "Friday",
+  "optimization_global_days_saturday--label": "Saturday",
+  "optimization_global_days_sunday--label": "Sunday",
   "optimization_inventory-parameters_purchase-schedule_pages--label": "Page {currentPage} of {totalPages}",
   "optimization_inventory-parameters_purchase-schedule_previous--label": "Previous",
   "optimization_inventory-parameters_purchase-schedule_next--label": "Next",
