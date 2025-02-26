@@ -10,6 +10,7 @@
         class="form-group__input"
         id="current-stock"
         data-testid="current-stock-input"
+        aria-describedby="current-stock-help"
         v-model="newParameters.currentStock"
       />
     </div>
@@ -22,6 +23,7 @@
         class="form-group__input"
         min="0"
         id="delivery-delay"
+        aria-describedby="delivery-delay-help"
         v-model="newParameters.deliveryDelay"
       />
     </div>
@@ -33,7 +35,8 @@
         type="number"
         class="form-group__input"
         id="package-format"
-        min="0"
+        aria-describedby="package-format-help"
+        min="1"
         v-model="newParameters.packageFormat"
       />
     </div>
@@ -41,12 +44,16 @@
       <label for="purchase-day">{{
         $t('optimization_inventory-parameters_purchase-day--label')
       }}</label>
-      <input
-        type="text"
+      <select
         class="form-group__input"
         id="purchase-day"
+        aria-describedby="purchase-day-help"
         v-model="newParameters.purchaseDay"
-      />
+      >
+        <option v-for="day in daysOptions" :key="day.option" :value="day.option">
+          {{ day.value }}
+        </option>
+      </select>
     </div>
     <div class="form-group">
       <label for="weekend-consumption">{{
@@ -56,6 +63,7 @@
         type="number"
         class="form-group__input"
         id="weekend-consumption"
+        aria-describedby="weekend-consumption-help"
         min="0"
         v-model="newParameters.weekendConsumption"
       />
@@ -69,6 +77,7 @@
         class="form-group__input"
         id="working-days-consumption"
         min="0"
+        aria-describedby="working-days-consumption-help"
         v-model="newParameters.workingDaysConsumption"
       />
     </div>
@@ -78,7 +87,9 @@
     :class="{ 'update-optimization--disabled': pending }"
     data-testid="update-optimization-button"
     @click="updateParameters"
+    @keydown.enter.prevent="updateParameters"
     :disabled="pending"
+    :aria-disabled="pending"
   >
     {{ $t('optimization_inventory-parameters_update-button--label') }}
   </button>
@@ -86,12 +97,21 @@
 
 <script setup lang="ts">
 import type { InventoryParameters } from '@/types/PurchaseSchedule'
-import { onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 
 import SkeletonCard from './SkeletonCard.vue'
+import { days } from '@/utils/daysHelper'
+import i18n from '@/i18n'
 
 const props = defineProps<{ parameters: InventoryParameters; pending: boolean }>()
 const emit = defineEmits(['update:parameters'])
+
+const daysOptions = computed(() =>
+  days.map((d) => ({
+    option: d,
+    value: i18n.global.t('optimization_global_days_' + d.toLowerCase() + '--label'),
+  })),
+)
 
 const newParameters: Ref<InventoryParameters | null> = ref(null)
 

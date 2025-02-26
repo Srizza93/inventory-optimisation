@@ -14,7 +14,10 @@ describe('Optimization view', () => {
     cy.get('[id="optimization-chart"]').should('be.visible')
     cy.get('[data-testid="purchase-schedule-table"').should('be.visible')
     cy.get('[data-testid="purchase-schedule-table"] tbody tr').should('have.length', 15)
-    cy.get('[data-testid="table-item-0-purchaseDate"]').should('contain.text', '05-01-2025')
+    cy.get('[data-testid="table-item-0-purchaseDate"]').should(
+      'contain.text',
+      'Sunday 5 January 2025',
+    )
     cy.get('[data-testid="table-item-0-orderAmount"]').should('contain.text', '34')
     cy.get('[data-testid="table-item-0-currentStock"]').should('contain.text', '2')
   })
@@ -26,7 +29,10 @@ describe('Optimization view', () => {
 
     cy.get('[data-testid="next-page"]').click()
 
-    cy.get('[data-testid="table-item-0-purchaseDate"]').should('contain.text', '20-01-2025')
+    cy.get('[data-testid="table-item-0-purchaseDate"]').should(
+      'contain.text',
+      'Monday 20 January 2025',
+    )
     cy.get('[data-testid="table-item-0-orderAmount"]').should('contain.text', '0')
     cy.get('[data-testid="table-item-0-currentStock"]').should('contain.text', '10')
   })

@@ -5,17 +5,25 @@
     :pending="pending"
     @update:parameters="updateParameters"
   />
-  <Line
-    v-if="purchaseScheduleData"
-    class="line-chart"
-    id="optimization-chart"
-    :options="chartOptions"
-    :data="chartData"
-  />
+  <div>
+    <p id="chart-description" class="sr-only">
+      {{ $t('optimization_chart_description') }}
+    </p>
+    <Line
+      v-if="purchaseScheduleData"
+      :options="chartOptions"
+      :data="chartData"
+      class="line-chart"
+      id="optimization-chart"
+      tabindex="0"
+      role="img"
+      aria-labelledby="chart-title chart-description"
+    />
+  </div>
   <InventoryDataTable
-    v-if="paginatedItems && purchaseScheduleData"
+    v-if="paginatedItems && purchaseSchedule"
     :headers="purchaseScheduleHeaders"
-    :items="purchaseScheduleData.purchaseSchedule"
+    :items="purchaseSchedule"
     :pending="pending"
     :totalPages="totalPages"
     :currentPage="currentPage"
@@ -37,11 +45,20 @@ import { ToastType } from '@/types/NotificationState'
 import ParametersForm from '@/components/ParametersForm.vue'
 import { Line } from 'vue-chartjs'
 import { Chart as ChartJS, registerables } from 'chart.js'
+import { formatDate } from '@/utils/dateHelper'
 
 ChartJS.register(...registerables)
 
 const pending = ref(false)
 const purchaseScheduleData: Ref<PurchaseScheduleItem | null> = ref(null)
+
+const purchaseSchedule = computed(
+  () =>
+    purchaseScheduleData.value?.purchaseSchedule.map((schedule) => ({
+      ...schedule,
+      purchaseDate: formatDate(schedule.purchaseDate),
+    })) || null,
+)
 
 const itemsPerPage = 15
 const currentPage = ref(1)
@@ -53,10 +70,7 @@ const totalPages = computed(() =>
 const startPage = computed(() => (currentPage.value - 1) * itemsPerPage)
 
 const paginatedItems = computed(() =>
-  purchaseScheduleData.value?.purchaseSchedule.slice(
-    startPage.value,
-    startPage.value + itemsPerPage,
-  ),
+  purchaseSchedule.value?.slice(startPage.value, startPage.value + itemsPerPage),
 )
 
 function goToNextPage() {

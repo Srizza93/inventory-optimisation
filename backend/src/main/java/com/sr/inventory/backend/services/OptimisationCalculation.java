@@ -8,12 +8,23 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OptimisationCalculation {
 
     LocalDate startDate = LocalDate.of(2025, 1, 5);
     LocalDate endDate = startDate.plusYears(1);
+
+    private static final List<String> DAYS = List.of(
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+    );
 
     public List<PurchaseSchedule> calculateOptimisation(InventoryParameters inventoryParameters) {
 
@@ -106,5 +117,31 @@ public class OptimisationCalculation {
         var maxDailyConsumption = Math.max(inventoryParameters.getWorkingDaysConsumption(), inventoryParameters.getWeekendConsumption());
         return maxDailyConsumption * inventoryParameters.getDeliveryDelay();
     }
+
+    public void validateParameters(InventoryParameters inventoryParameters) {
+        Optional.ofNullable(inventoryParameters.getDeliveryDelay())
+                .filter(d -> d >= 0)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid delivery delay"));
+
+        Optional.ofNullable(inventoryParameters.getWeekendConsumption())
+                .filter(c -> c >= 0)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid weekend consumption"));
+
+        Optional.ofNullable(inventoryParameters.getWorkingDaysConsumption())
+                .filter(c -> c >= 0)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid working days consumption"));
+
+        Optional.ofNullable(inventoryParameters.getCurrentStock())
+                .orElseThrow(() -> new IllegalArgumentException("Current stock must not be null"));
+
+        Optional.ofNullable(inventoryParameters.getPackageFormat())
+                .filter(p -> p > 0)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid package format"));
+
+        Optional.ofNullable(inventoryParameters.getPurchaseDay())
+                .filter(DAYS::contains)
+                        .orElseThrow(() -> new IllegalArgumentException("Purchase day is required"));
+    }
+
 
 }
