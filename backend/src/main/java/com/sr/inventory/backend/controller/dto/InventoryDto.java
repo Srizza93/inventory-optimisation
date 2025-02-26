@@ -16,4 +16,5 @@ public class InventoryDto {
 
     private InventoryParameters inventoryParameters;
     private List<PurchaseSchedule> purchaseSchedule;
+    private Integer bestPackageFormat;
 }
