@@ -5,13 +5,21 @@
     :pending="pending"
     @update:parameters="updateParameters"
   />
-  <Line
-    v-if="purchaseScheduleData"
-    class="line-chart"
-    id="optimization-chart"
-    :options="chartOptions"
-    :data="chartData"
-  />
+  <div>
+    <p id="chart-description" class="sr-only">
+      {{ $t('optimization_chart_description') }}
+    </p>
+    <Line
+      v-if="purchaseScheduleData"
+      :options="chartOptions"
+      :data="chartData"
+      class="line-chart"
+      id="optimization-chart"
+      tabindex="0"
+      role="img"
+      aria-labelledby="chart-title chart-description"
+    />
+  </div>
   <InventoryDataTable
     v-if="paginatedItems && purchaseScheduleData"
     :headers="purchaseScheduleHeaders"

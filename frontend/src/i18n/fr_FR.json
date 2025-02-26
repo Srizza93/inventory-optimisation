@@ -6,6 +6,7 @@
   "optimization_global_days_friday--label": "Vendredi",
   "optimization_global_days_saturday--label": "Samedi",
   "optimization_global_days_sunday--label": "Dimanche",
+  "optimization_chart_description": "Graphique en ligne montrant le stock d'inventaire au fil du temps. L'axe X représente les dates d'achat et l'axe Y représente les niveaux de stock.",
   "optimization_inventory-parameters_purchase-schedule_pages--label": "Page {currentPage} de {totalPages}",
   "optimization_inventory-parameters_purchase-schedule_previous--label": "Précédent",
   "optimization_inventory-parameters_purchase-schedule_next--label": "Suivant",

@@ -10,6 +10,7 @@
         class="form-group__input"
         id="current-stock"
         data-testid="current-stock-input"
+        aria-describedby="current-stock-help"
         v-model="newParameters.currentStock"
       />
     </div>
@@ -22,6 +23,7 @@
         class="form-group__input"
         min="0"
         id="delivery-delay"
+        aria-describedby="delivery-delay-help"
         v-model="newParameters.deliveryDelay"
       />
     </div>
@@ -33,6 +35,7 @@
         type="number"
         class="form-group__input"
         id="package-format"
+        aria-describedby="package-format-help"
         min="1"
         v-model="newParameters.packageFormat"
       />
@@ -41,7 +44,12 @@
       <label for="purchase-day">{{
         $t('optimization_inventory-parameters_purchase-day--label')
       }}</label>
-      <select class="form-group__input" id="purchase-day" v-model="newParameters.purchaseDay">
+      <select
+        class="form-group__input"
+        id="purchase-day"
+        aria-describedby="purchase-day-help"
+        v-model="newParameters.purchaseDay"
+      >
         <option v-for="day in daysOptions" :key="day.option" :value="day.option">
           {{ day.value }}
         </option>
@@ -55,6 +63,7 @@
         type="number"
         class="form-group__input"
         id="weekend-consumption"
+        aria-describedby="weekend-consumption-help"
         min="0"
         v-model="newParameters.weekendConsumption"
       />
@@ -68,6 +77,7 @@
         class="form-group__input"
         id="working-days-consumption"
         min="0"
+        aria-describedby="working-days-consumption-help"
         v-model="newParameters.workingDaysConsumption"
       />
     </div>
@@ -77,7 +87,9 @@
     :class="{ 'update-optimization--disabled': pending }"
     data-testid="update-optimization-button"
     @click="updateParameters"
+    @keydown.enter.prevent="updateParameters"
     :disabled="pending"
+    :aria-disabled="pending"
   >
     {{ $t('optimization_inventory-parameters_update-button--label') }}
   </button>

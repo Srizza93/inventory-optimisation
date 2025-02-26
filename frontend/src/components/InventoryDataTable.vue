@@ -32,6 +32,7 @@
       class="table"
       style="table-layout: fixed; border-collapse: collapse"
       data-testid="purchase-schedule-table"
+      tabindex="0"
     >
       <thead>
         <tr class="header">
