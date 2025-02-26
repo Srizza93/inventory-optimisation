@@ -5,16 +5,22 @@
     :pending="pending"
     @update:parameters="updateParameters"
   />
+  <Line class="line-chart" id="my-chart-id" :options="chartOptions" :data="chartData" />
   <InventoryDataTable
-    v-if="purchaseScheduleData"
+    v-if="paginatedItems && purchaseScheduleData"
     :headers="purchaseScheduleHeaders"
     :items="purchaseScheduleData.purchaseSchedule"
     :pending="pending"
+    :totalPages="totalPages"
+    :currentPage="currentPage"
+    :paginatedItems="paginatedItems"
+    @previous-page="goToPreviousPage"
+    @next-page="goToNextPage"
   />
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
 import i18n from '@/i18n'
 
 import { getOptimizationSchedule, putOptimizationSchedule } from '@/api/optimizationApi'
@@ -23,9 +29,41 @@ import InventoryDataTable from '@/components/InventoryDataTable.vue'
 import type { InventoryParameters, PurchaseScheduleItem } from '@/types/PurchaseSchedule'
 import { ToastType } from '@/types/NotificationState'
 import ParametersForm from '@/components/ParametersForm.vue'
+import { Line } from 'vue-chartjs'
+import { Chart as ChartJS, registerables } from 'chart.js'
+
+ChartJS.register(...registerables)
 
 const pending = ref(false)
 const purchaseScheduleData: Ref<PurchaseScheduleItem | null> = ref(null)
+
+const itemsPerPage = 15
+const currentPage = ref(1)
+
+const totalPages = computed(() =>
+  Math.ceil((purchaseScheduleData.value?.purchaseSchedule?.length || 0) / itemsPerPage),
+)
+
+const startPage = computed(() => (currentPage.value - 1) * itemsPerPage)
+
+const paginatedItems = computed(() => {
+  return purchaseScheduleData.value?.purchaseSchedule.slice(
+    startPage.value,
+    startPage.value + itemsPerPage,
+  )
+})
+
+function goToNextPage() {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+function goToPreviousPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
 
 const purchaseScheduleHeaders = [
   {
@@ -41,6 +79,32 @@ const purchaseScheduleHeaders = [
     value: 'currentStock',
   },
 ]
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+}
+
+const chartData = computed(() => {
+  return {
+    labels:
+      purchaseScheduleData.value?.purchaseSchedule
+        .slice(startPage.value, startPage.value + itemsPerPage)
+        .map((item) => item.purchaseDate) || [],
+    datasets: [
+      {
+        label: i18n.global.t('optimization_purchase-schedule_current-stock--title'),
+        data:
+          purchaseScheduleData.value?.purchaseSchedule
+            .slice(startPage.value, startPage.value + itemsPerPage)
+            .map((item) => item.currentStock) || [],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  }
+})
 
 function updateParameters(parameters: InventoryParameters) {
   if (!purchaseScheduleData.value) {
@@ -101,3 +165,11 @@ onMounted(() => {
   initData()
 })
 </script>
+
+<style scoped lang="scss">
+.line-chart {
+  height: 100%;
+  max-height: 400px;
+  margin-bottom: 15px;
+}
+</style>
