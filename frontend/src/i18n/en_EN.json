@@ -1,5 +1,5 @@
 {
-  "optimization_inventory-parameters_purchase-schedule_pages--label": "Page {{ currentPage }} of {{ totalPages }}",
+  "optimization_inventory-parameters_purchase-schedule_pages--label": "Page {currentPage} of {totalPages}",
   "optimization_inventory-parameters_purchase-schedule_previous--label": "Previous",
   "optimization_inventory-parameters_purchase-schedule_next--label": "Next",
   "optimization_inventory-parameters_update-button--label": "Update Schedule",

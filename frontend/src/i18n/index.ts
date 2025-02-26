@@ -1,4 +1,4 @@
-import '@/assets/base.css'
+import AppLocaleService from '@/services/appLocaleService'
 
 import { createI18n } from 'vue-i18n'
 
@@ -6,7 +6,7 @@ import frFR from './fr_FR.json'
 import enEN from './en_EN.json'
 
 export default createI18n({
-  locale: 'fr',
+  locale: AppLocaleService.getAppLocale(),
   fallbackLocale: 'fr',
   silentTranslationWarn: true,
   messages: {
