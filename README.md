@@ -1,5 +1,3 @@
-# inventory-optimisation
-
 # Inventory Optimization App
 
 This project is an Inventory Optimization application built with a Vue.js frontend and a Spring Boot backend. The application helps in optimizing inventory by calculating purchase schedules based on various parameters.
@@ -8,14 +6,16 @@ This project is an Inventory Optimization application built with a Vue.js fronte
 
 ## Table of Contents
 
+- [Features](#features)
 - [Project Structure](#project-structure)
 - [Clone the repository](#clone-the-repository)
-- [Features](#features)
 - [Frontend](#frontend)
   - [Project Setup](#project-setup)
   - [Environment Variables](#environment-variables)
   - [Run Unit Tests](#run-unit-tests)
   - [Run End-to-End Tests](#run-end-to-end-tests)
+- [Database](#database)
+  - [Database Setup](#database-setup)
 - [Backend](#backend)
   - [Project Setup](#project-setup-1)
   - [Environment Variables](#environment-variables-1)
@@ -32,7 +32,7 @@ This project is an Inventory Optimization application built with a Vue.js fronte
 
 ### 2. Optimal Purchase Calculation
 
-- Computes the optimal yogurt purchase quantities starting from January 6, 2025, for a duration of one year.
+- Computes the optimal yogurt purchase quantities starting from January 5, 2025, for a duration of one year.
 - Ensures no stock shortage while minimizing excess inventory.
 
 ### 3. User Interface
@@ -58,11 +58,14 @@ The project is a mono repository including a backend and a frontend folder.
 
 ```
 git clone https://github.com/Srizza93/inventory-optimisation.git
+cd inventory-optimisation
 ```
 
 # Frontend
 
 ## Project Setup
+
+node version: v20.14.0
 
 ```
 cd frontend
@@ -92,6 +95,38 @@ npm run test:unit
 ```
 npm run test:e2e:dev
 ```
+
+# Database
+
+PostgreSQL
+
+## Database Setup
+
+1. **Install PostgreSQL**: If you don't have PostgreSQL installed, download and install it from [here](https://www.postgresql.org/download/).
+
+2. **Create a Database**: Open the PostgreSQL shell and create a new database.
+
+   ```
+   CREATE DATABASE inventory_db;
+   ```
+
+3. **Configure Database Connection**: Update the `application.properties` file in the [resources](http://_vscodecontentref_/0) directory with your database connection details.
+
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/inventory_db
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
+   spring.jpa.hibernate.ddl-auto=update
+   spring.jpa.show-sql=true
+   ```
+
+4. **Run Database Migrations**: If you are using a tool like Flyway or Liquibase for database migrations, run the migrations to set up the initial schema.
+
+   ```
+   ./mvnw flyway:migrate
+   ```
+
+Make sure to replace `your_username` and `your_password` with your actual PostgreSQL username and password.
 
 # Backend
 
