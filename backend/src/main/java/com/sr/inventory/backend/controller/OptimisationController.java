@@ -1,8 +1,8 @@
-package com.sr.inventory.backend.rest;
+package com.sr.inventory.backend.controller;
 
-import com.sr.inventory.backend.business.service.OptimisationCalculation;
-import com.sr.inventory.backend.dto.InventoryDto;
-import com.sr.inventory.backend.exception.NotFoundException;
+import com.sr.inventory.backend.services.OptimisationCalculation;
+import com.sr.inventory.backend.controller.dto.InventoryDto;
+import com.sr.inventory.backend.controller.exception.NotFoundException;
 import com.sr.inventory.backend.model.InventoryParameters;
 import com.sr.inventory.backend.repository.InventoryParametersRepository;
 import jakarta.validation.Valid;
