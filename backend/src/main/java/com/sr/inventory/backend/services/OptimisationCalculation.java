@@ -1,7 +1,7 @@
-package com.sr.inventory.backend.business.service;
+package com.sr.inventory.backend.services;
 
-import com.sr.inventory.backend.business.dto.DeliveryOrder;
-import com.sr.inventory.backend.dto.PurchaseSchedule;
+import com.sr.inventory.backend.model.DeliveryOrder;
+import com.sr.inventory.backend.controller.dto.PurchaseSchedule;
 import com.sr.inventory.backend.model.InventoryParameters;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.sr.inventory.backend.dto;
+package com.sr.inventory.backend.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

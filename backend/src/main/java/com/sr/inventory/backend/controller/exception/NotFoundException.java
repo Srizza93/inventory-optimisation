@@ -1,4 +1,4 @@
-package com.sr.inventory.backend.exception;
+package com.sr.inventory.backend.controller.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
