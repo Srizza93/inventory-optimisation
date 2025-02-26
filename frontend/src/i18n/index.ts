@@ -1,3 +1,5 @@
+import '@/assets/base.css'
+
 import { createI18n } from 'vue-i18n'
 
 import frFR from './fr_FR.json'
