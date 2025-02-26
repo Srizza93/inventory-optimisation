@@ -48,7 +48,7 @@ This project is an Inventory Optimization application built with a Vue.js fronte
 ## Technology Stack
 
 - **Frontend**: Vue.js (TypeScript)
-- **Backend**: Java Spring Boot
+- **Backend**: Java 17 Spring Boot
 
 ## Project Structure
 
@@ -132,10 +132,21 @@ Make sure to replace `your_username` and `your_password` with your actual Postgr
 
 ## Project Setup
 
+Run Docker Engine
+
 ```
 cd backend
-mvn clean install
+./mvnw clean install
 ```
+
+Set JDK 17 as the default version: You may need to set JDK 17 as the default version. Add the following to your shell profile (~/.bash_profile, ~/.zshrc, etc.):
+
+```
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+Note for IntelliJ Users: If you are using IntelliJ IDEA, you can follow its instructions to set up JDK 17. IntelliJ will guide you through the process of configuring the JDK for your project.
 
 ## Environment Variables
 
@@ -152,7 +163,7 @@ CORS_ALLOWED_ORIGIN
 
 ```
 cd backend
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 ## Run Tests
