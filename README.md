@@ -170,5 +170,5 @@ cd backend
 
 ```
 cd backend
-mvn test
+./mvnw test
 ```
