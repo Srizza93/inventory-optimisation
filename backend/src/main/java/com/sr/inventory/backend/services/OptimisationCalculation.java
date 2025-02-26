@@ -72,6 +72,17 @@ public class OptimisationCalculation {
         return purchaseSchedule;
     }
 
+    public List<PurchaseSchedule> calculateOptimisation(InventoryParameters inventoryParameters, Integer actualBestPackageFormat) {
+        return calculateOptimisation(InventoryParameters.builder()
+                .purchaseDay(inventoryParameters.getPurchaseDay())
+                .currentStock(inventoryParameters.getCurrentStock())
+                .weekendConsumption(inventoryParameters.getWeekendConsumption())
+                .workingDaysConsumption(inventoryParameters.getWorkingDaysConsumption())
+                .deliveryDelay(inventoryParameters.getDeliveryDelay())
+                .packageFormat(actualBestPackageFormat)
+                .build());
+    }
+
     private Integer getQuantityToBuy(InventoryParameters inventoryParameters, LocalDate actualDate,
                                      Integer packageFormat, Integer currentStock, Integer bufferStock,
                                      List<DeliveryOrder> deliveryOrders) {
@@ -141,6 +152,55 @@ public class OptimisationCalculation {
         Optional.ofNullable(inventoryParameters.getPurchaseDay())
                 .filter(DAYS::contains)
                         .orElseThrow(() -> new IllegalArgumentException("Purchase day is required"));
+    }
+
+    public Integer getBestInventoryOptimizationByPackage(InventoryParameters inventoryParameters, Integer maxPossibleFormat) {
+        var bestPackageFormat = 6;
+        var baseOptimisation = calculateOptimisation(inventoryParameters);
+        var bestStockLevel = calculateTotalStockLevel(baseOptimisation);
+        var bestStockoutRate = calculateStockoutRate(baseOptimisation);
+
+        for (int actualPackageFormat = bestPackageFormat; actualPackageFormat <= maxPossibleFormat; actualPackageFormat += 2) {
+            var purchaseSchedules = calculateOptimisation(inventoryParameters, actualPackageFormat);
+
+            var stockoutRate = calculateStockoutRate(purchaseSchedules);
+            var stockLevel = calculateTotalStockLevel(purchaseSchedules);
+
+            if (stockoutRate == 0) {
+                if (stockLevel < bestStockLevel) {
+                    bestPackageFormat = actualPackageFormat;
+                    bestStockLevel = stockLevel;
+                }
+            } else {
+                if (stockoutRate < bestStockoutRate) {
+                    bestPackageFormat = actualPackageFormat;
+                    bestStockLevel = stockLevel;
+                    bestStockoutRate = stockoutRate;
+                } else if (stockoutRate == bestStockoutRate && stockLevel < bestStockLevel) {
+                    bestPackageFormat = actualPackageFormat;
+                    bestStockLevel = stockLevel;
+                }
+            }
+        }
+
+        return bestPackageFormat;
+    }
+
+
+
+
+
+    public int calculateTotalStockLevel(List<PurchaseSchedule> purchaseSchedules) {
+        return purchaseSchedules.stream()
+                .mapToInt(PurchaseSchedule::getCurrentStock)
+                .sum() / purchaseSchedules.size();
+    }
+
+
+    public int calculateStockoutRate(List<PurchaseSchedule> purchaseSchedules) {
+        return (int) purchaseSchedules.stream()
+                .filter(schedule -> schedule.getCurrentStock() <= 0)
+                .count();
     }
 
 

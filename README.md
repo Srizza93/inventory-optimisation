@@ -4,6 +4,10 @@ This project is an Inventory Optimization application built with a Vue.js fronte
 
 [Technical Interview Instructions](https://docs.google.com/document/d/1JrymuUlePo70TVO0uUy8um-2Q8GT6_ed-iyAcnnnMec/edit?usp=sharing)
 
+## Result Test
+
+The best package format multiple of 2 superior of 4 is 6.
+
 ## Table of Contents
 
 - [Features](#features)

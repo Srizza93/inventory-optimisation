@@ -50,4 +50,22 @@ public class OptimisationController {
                 .inventoryParameters(updatedInventoryParameters)
                 .build();
     }
+
+    @GetMapping("/best-optimization")
+    public InventoryDto getBestInventoryOptimizationByPackage(@RequestParam final String parametersId, @RequestParam final Integer maxPossibleFormat) throws NotFoundException {
+        log.info("Getting the best inventory optimization");
+
+        var inventoryParameters = inventoryParametersRepository.findById(parametersId)
+                .orElseThrow(() -> new NotFoundException("Inventory parameters not found"));
+
+        var bestPackageFormat = optimisationCalculation.getBestInventoryOptimizationByPackage(inventoryParameters, maxPossibleFormat);
+
+        inventoryParameters.setPackageFormat(bestPackageFormat);
+
+        return InventoryDto.builder()
+                .purchaseSchedule(optimisationCalculation.calculateOptimisation(inventoryParameters))
+                .inventoryParameters(inventoryParameters)
+                .bestPackageFormat(bestPackageFormat)
+                .build();
+    }
 }
