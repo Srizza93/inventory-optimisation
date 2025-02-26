@@ -17,7 +17,7 @@ export const notification = reactive({
       message: msg || defaultMessage,
       type: typeEnum,
     }
-    setTimeout(() => this.hideNotification(), 50000)
+    setTimeout(() => this.hideNotification(), 5000)
   },
 
   hideNotification() {

@@ -1,16 +1,15 @@
 <template>
-  <div>
-    <h1>Optimization</h1>
-    <p>Optimization view</p>
-  </div>
   <ParametersForm
     v-if="purchaseScheduleData"
-    :parameters="purchaseScheduleData?.inventoryParameters"
+    :parameters="purchaseScheduleData.inventoryParameters"
+    :pending="pending"
+    @update:parameters="updateParameters"
   />
   <InventoryDataTable
     v-if="purchaseScheduleData"
     :headers="purchaseScheduleHeaders"
     :items="purchaseScheduleData.purchaseSchedule"
+    :pending="pending"
   />
 </template>
 
@@ -18,15 +17,15 @@
 import { onMounted, ref, type Ref } from 'vue'
 import i18n from '@/i18n'
 
-import { getOptimizationSchedule } from '@/api/optimizationApi'
+import { getOptimizationSchedule, putOptimizationSchedule } from '@/api/optimizationApi'
 import { notification } from '@/stores/StateNotificationService'
 import InventoryDataTable from '@/components/InventoryDataTable.vue'
-import type { PurchaseScheduleItem } from '@/types/PurchaseSchedule'
+import type { InventoryParameters, PurchaseScheduleItem } from '@/types/PurchaseSchedule'
 import { ToastType } from '@/types/NotificationState'
 import ParametersForm from '@/components/ParametersForm.vue'
 
-let pending = ref(false)
-let purchaseScheduleData: Ref<PurchaseScheduleItem | null> = ref(null)
+const pending = ref(false)
+const purchaseScheduleData: Ref<PurchaseScheduleItem | null> = ref(null)
 
 const purchaseScheduleHeaders = [
   {
@@ -43,6 +42,42 @@ const purchaseScheduleHeaders = [
   },
 ]
 
+function updateParameters(parameters: InventoryParameters) {
+  if (!purchaseScheduleData.value) {
+    return
+  }
+
+  purchaseScheduleData.value.inventoryParameters = parameters
+
+  updateData()
+}
+
+function updateData() {
+  pending.value = true
+
+  if (!purchaseScheduleData.value?.inventoryParameters) {
+    notification.sendNotification(ToastType.DANGER_TOAST, 'No data to update')
+    pending.value = false
+    return
+  }
+
+  putOptimizationSchedule(purchaseScheduleData.value.inventoryParameters)
+    .then((response) => {
+      purchaseScheduleData.value = response
+      notification.sendNotification(ToastType.SUCCESS_TOAST, 'Data updated successfully')
+    })
+    .catch((error: unknown) => {
+      const err = error as { response?: { statusText?: string } }
+      notification.sendNotification(
+        ToastType.DANGER_TOAST,
+        err.response?.statusText || 'An error occurred',
+      )
+    })
+    .finally(() => {
+      pending.value = false
+    })
+}
+
 function initData() {
   pending.value = true
 
@@ -51,7 +86,11 @@ function initData() {
       purchaseScheduleData.value = response
     })
     .catch((error) => {
-      notification.sendNotification(ToastType.DANGER_TOAST, error.response?.data?.message)
+      const err = error as { response?: { statusText?: string } }
+      notification.sendNotification(
+        ToastType.DANGER_TOAST,
+        error.response?.statusText || 'An error occurred',
+      )
     })
     .finally(() => {
       pending.value = false
