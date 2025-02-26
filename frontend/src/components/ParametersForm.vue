@@ -1,6 +1,6 @@
 <template>
   <SkeletonCard v-if="pending || !newParameters" :lines="2" />
-  <form v-else class="parameters">
+  <form v-else class="parameters" data-testid="parameters-form">
     <div class="form-group">
       <label for="current-stock">{{
         $t('optimization_inventory-parameters_current-stock--label')
@@ -9,6 +9,7 @@
         type="number"
         class="form-group__input"
         id="current-stock"
+        data-testid="current-stock-input"
         v-model="newParameters.currentStock"
       />
     </div>
@@ -75,6 +76,7 @@
   <button
     class="update-optimization"
     :class="{ 'update-optimization--disabled': pending }"
+    data-testid="update-optimization-button"
     @click="updateParameters"
     :disabled="pending"
   >

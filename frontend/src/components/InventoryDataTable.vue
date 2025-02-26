@@ -22,12 +22,17 @@
         @click="$emit('next-page')"
         :disabled="currentPage === totalPages"
         class="pagination__button"
+        data-testid="next-page"
       >
         {{ $t('optimization_inventory-parameters_purchase-schedule_next--label') }}
       </button>
     </div>
 
-    <table class="table" style="table-layout: fixed; border-collapse: collapse">
+    <table
+      class="table"
+      style="table-layout: fixed; border-collapse: collapse"
+      data-testid="purchase-schedule-table"
+    >
       <thead>
         <tr class="header">
           <th class="header__title" scope="col" v-for="header in headers" :key="header.value">

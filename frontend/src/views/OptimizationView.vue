@@ -5,7 +5,13 @@
     :pending="pending"
     @update:parameters="updateParameters"
   />
-  <Line class="line-chart" id="my-chart-id" :options="chartOptions" :data="chartData" />
+  <Line
+    v-if="purchaseScheduleData"
+    class="line-chart"
+    id="optimization-chart"
+    :options="chartOptions"
+    :data="chartData"
+  />
   <InventoryDataTable
     v-if="paginatedItems && purchaseScheduleData"
     :headers="purchaseScheduleHeaders"
