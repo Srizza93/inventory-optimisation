@@ -149,7 +149,7 @@ function updateData() {
 function initData() {
   pending.value = true
 
-  getOptimizationSchedule('3d18d976-4b65-42ac-8c22-4b4de334bbdb')
+  getOptimizationSchedule()
     .then((response) => {
       purchaseScheduleData.value = response
     })
