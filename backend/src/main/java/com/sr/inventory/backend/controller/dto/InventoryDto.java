@@ -1,6 +1,7 @@
 package com.sr.inventory.backend.controller.dto;
 
 import com.sr.inventory.backend.model.InventoryParameters;
+import com.sr.inventory.backend.model.PurchaseSchedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
